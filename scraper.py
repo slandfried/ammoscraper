@@ -8,9 +8,6 @@ PATH = "/Users/spland/chromedriver"
 driver = webdriver.Chrome(PATH)
 
 URL = 'https://palmettostatearmory.com/shop-ammo-by-caliber.html'
-
-# PSA 9mm ammo -- only retrieve what is in stock
-#URL = 'https://palmettostatearmory.com/9mm-ammo.html?stock_filter=Show+Only+In+Stock'
 driver.get(URL)
 
 #Get all links in the page
@@ -20,18 +17,16 @@ for elem in elems:
   if("ammo" in elem.get_attribute("href")):
     ammoLinks.append(elem.get_attribute("href"))
 
+#Parse links to determine available calibers on PSA website and create a list with links + caliber name
 outputLinks = []
 for i in ammoLinks:
   s = i[32:]
   s = s.split(".",1)[0]
   s = s.split("-")
   if(bool(re.search(r'\d', s[0]))):
-    outputLinks.append({'link': i, 'caliber': [s[:-1]})
+    outputLinks.append({'link': i, 'caliber': s[:-1]})
 
-print(outputLinks)
+# PSA 9mm ammo -- only retrieve what is in stock
+#URL = 'https://palmettostatearmory.com/9mm-ammo.html?stock_filter=Show+Only+In+Stock'
 
-# for elem in elems:
-#   print(elem.get_attribute("href"))
 
-# soup = BeautifulSoup(page.content, 'html.parser')
-# print(soup.prettify())
