@@ -70,17 +70,25 @@ driver.get(URL)
 
 data_post = {'key': API_KEY, 'method': 'hcaptcha', 'sitekey': data_sitekey, 'pageurl': URL}
 captcha_id = requests.post(url = 'https://2captcha.com/in.php', data = data_post)
-print(captcha_id)
-print(captcha_id.text)
+# print(captcha_id)
+# print(captcha_id.text)
 time.sleep(15)
 data_get = {'key': API_KEY, 'action': 'get', 'id': captcha_id.text.split('|')[1]}
 answer = requests.get('https://2captcha.com/res.php', params = data_get).text
-print("captcha request sent...")
+
 if 'CAPTCHA_NOT_READY' in answer:
   time.sleep(5)
   data_get = {'key': API_KEY, 'action': 'get', 'id': captcha_id.text.split('|')[1]}
   answer = requests.get('https://2captcha.com/res.php', params = data_get).text
-print(answer)
+answer = answer.split('|')[1]
+
+# send answer
+# IT WORKS!!!!!! - there was no g-recaptcha-response element, that's why original version from 2captcha website returned null element js error
+driver.execute_script("""
+  let [answer] = arguments
+  document.querySelector('[name="h-captcha-response"]').innerHTML = answer
+  document.querySelector('.challenge-form').submit()
+""", answer)
 
 
 
@@ -88,9 +96,5 @@ print(answer)
 
 
 
-# elems = driver.find_elements_by_class_name("product-item-info")
-# for elem in elems:
-#   #print(elem.text) -- prints text from all the product info elements
-#   print(elem)
 
 
