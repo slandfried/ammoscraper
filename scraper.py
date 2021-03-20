@@ -10,6 +10,8 @@ from fake_useragent import UserAgent
 
 #For Captchas
 API_KEY = 'deadeba0a355a7279f678af3246f6e65'
+
+#Found using inspect element on captcha page for 410 gauge
 data_sitekey = '33f96e6a-38cd-421b-bb68-7806e1764460'
 
 # Tried the below to spoof the Capcha... didn't work
