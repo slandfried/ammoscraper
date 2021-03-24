@@ -9,7 +9,7 @@ from selenium.webdriver.common.by import By
 from fake_useragent import UserAgent
 
 #For Captchas
-API_KEY = 'deadeba0a355a7279f678af3246f6e65'
+API_KEY = '643ef18609fdca72440a9abbe8c5bd5f'
 
 #Found using inspect element on captcha page for 410 gauge
 data_sitekey = '33f96e6a-38cd-421b-bb68-7806e1764460'
