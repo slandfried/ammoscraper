@@ -9,9 +9,10 @@ from selenium.webdriver.common.by import By
 from fake_useragent import UserAgent
 from PIL import Image # using this to display images I grab from products
 from selenium.common.exceptions import NoSuchElementException
+from scraper import getLinks
 
 
-def solveCaptcha(link):
+def solveCaptcha(link, driver):
   #For Captchas
   API_KEY = '643ef18609fdca72440a9abbe8c5bd5f'
 
@@ -46,8 +47,15 @@ def retrieveListings(id_num, link, driver):
 
   chrome_d = driver
   chrome_d.get(link)
-  if(id_num != 0):
-    solveCaptcha(link)
+  time.sleep(5)
+  # need to determine if we've been re-directed to catpcha
+  cap_stat = 1
+  try:
+    in_cap = driver.find_element_by_id("challenge-form")
+  except NoSuchElementException:
+    cap_stat = 0
+  if(cap_stat):
+    solveCaptcha(link, driver)
   list_id = id_num
 
   elems = chrome_d.find_elements_by_class_name('product-item-info')
@@ -92,27 +100,25 @@ def retrieveListings(id_num, link, driver):
 
     # listings.append({"id": list_id, "link": elem.find_element_by_class_name('product-item-link').get_attribute('href'), "img": elem.find_element_by_class_name('product-image-photo').get_attribute('src'),
     #   "name": elem.find_element_by_class_name('product-item-link').text, "price": elem.find_element_by_class_name('special-price').text, "p_per": elem.find_element_by_class_name('price-wrapper unit-price')})
-    list_id+=1
+    list_id+=1 # ****** need to think about wtf I'm doing here with list_id
   
   return list_id, listings
 
 
+def getData():
+  URLs = getLinks()
 
+  PATH = "/Users/spland/chromedriver"
+  driver = webdriver.Chrome(PATH)
 
-PATH = "/Users/spland/chromedriver"
-driver = webdriver.Chrome(PATH)
-
-
-URLs = ['https://palmettostatearmory.com/12-gauge-ammo.html?stock_filter=Show+Only+In+Stock', 'https://palmettostatearmory.com/10-gauge-ammo.html?stock_filter=Show+Only+In+Stock']
-num = 0
-outputList = []
-for u in URLs:
-  results = retrieveListings(num, u, driver)
-  num = results[0]
-  outputList.extend(results[1])
-  time.sleep(5)
-print(num)
-print(outputList)
+  num = 0
+  outputList = []
+  for u in URLs:
+    results = retrieveListings(num, u["link"], driver)
+    num = results[0]
+    outputList.extend(results[1])
+    time.sleep(5)
+  return outputList
 
 
 
